@@ -324,7 +324,7 @@
                 </div>
                 <div class="form-group">
                     <label>Tên Repository</label>
-                    <input type="text" id="gh-repo" class="form-control" required placeholder="Ví dụ: skkn-data">
+                    <input type="text" id="gh-repo" class="form-control" required placeholder="Ví dụ: app-quan-ly-skkn">
                 </div>
 
                 <h4 style="border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 10px; margin-top: 20px; color: var(--ai-color);">2. Cấu hình Trợ lý AI (Tùy chọn)</h4>
@@ -596,44 +596,68 @@
         // Cấu hình LocalStorage
         let ghConfig = JSON.parse(localStorage.getItem('skkn_gh_config')) || { token: '', owner: '', repo: '', geminiKey: '' };
 
-        /* Hàm gọi API Gemini với Retry (Exponential Backoff) */
-        async function callGeminiAPI(payload, maxRetries = 5) {
-            // Sử dụng Key do người dùng nhập, nếu không có thì dùng Key môi trường (nếu được cấp)
+        /* Hàm gọi API Gemini với Fallback Model & Retry */
+        async function callGeminiAPI(payload, maxRetries = 2) {
             const activeApiKey = ghConfig.geminiKey || apiKey;
-            
             if (!activeApiKey) {
                 alert("Bạn chưa cấu hình Gemini API Key!\nVui lòng vào mục 'Cấu hình Hệ thống' và nhập API Key để sử dụng trí tuệ nhân tạo.");
                 return null;
             }
 
-            // Đã đổi sang mô hình gemini-1.5-flash bản chính thức, ổn định và tương thích với mọi API Key
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${activeApiKey}`;
-            const delays = [1000, 2000, 4000, 8000, 16000];
+            // Danh sách các mô hình để dự phòng. Thử bản mới nhất, nếu 404 thì lùi dần về bản cũ hơn
+            const modelsToTry = [
+                'gemini-1.5-flash',
+                'gemini-1.5-flash-latest', 
+                'gemini-pro' // Mô hình v1.0 ổn định, hầu hết các key đều có quyền truy cập
+            ];
             
-            for (let i = 0; i <= maxRetries; i++) {
-                try {
-                    const response = await fetch(url, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(payload)
-                    });
+            const delays = [1000, 2000, 4000];
 
-                    if (!response.ok) {
-                        const err = await response.json();
-                        throw new Error(`Lỗi ${response.status}: ${err.error?.message || 'Không rõ lỗi'}`);
-                    }
+            for (const model of modelsToTry) {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${activeApiKey}`;
+                
+                for (let i = 0; i <= maxRetries; i++) {
+                    try {
+                        const response = await fetch(url, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(payload)
+                        });
 
-                    const data = await response.json();
-                    return data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-                } catch (err) {
-                    console.error("Gemini API Error:", err);
-                    if (i === maxRetries) {
-                        alert("Lỗi kết nối AI: " + err.message + "\n\nXin kiểm tra lại Gemini API Key của bạn trong mục Cấu hình.");
-                        return null;
+                        if (response.ok) {
+                            const data = await response.json();
+                            return data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+                        } else if (response.status === 404) {
+                            // Nếu model này bị 404 (Không tìm thấy), thoát vòng lặp Retry và chuyển sang Model tiếp theo trong danh sách Fallback
+                            console.warn(`Mô hình ${model} không khả dụng (Lỗi 404), đang chuyển sang mô hình tiếp theo...`);
+                            break; 
+                        } else if (response.status === 429 || response.status >= 500) {
+                            // Lỗi quá tải hoặc server bận -> Thử lại
+                            if (i === maxRetries) {
+                                const err = await response.json().catch(() => ({}));
+                                throw new Error(`Lỗi ${response.status}: ${err.error?.message || 'Server đang bận'}`);
+                            }
+                            await new Promise(resolve => setTimeout(resolve, delays[i] || 2000));
+                        } else {
+                            // Lỗi khác (VD: 400 Sai request, 403 Sai API Key) -> Báo lỗi ngay lập tức
+                            const err = await response.json().catch(() => ({}));
+                            throw new Error(`Lỗi ${response.status}: ${err.error?.message || 'Yêu cầu không hợp lệ'}`);
+                        }
+                    } catch (err) {
+                        // Nếu đang ở model cuối cùng hoặc lỗi không phải là 404 thì hiển thị thông báo cho người dùng
+                        if (model === modelsToTry[modelsToTry.length - 1] || !err.message.includes("404")) {
+                            console.error("Gemini API Error with " + model + ":", err);
+                            alert("Lỗi kết nối AI: " + err.message + "\n\nXin kiểm tra lại Gemini API Key của bạn trong mục Cấu hình.");
+                            return null;
+                        }
+                        break; // Thoát vòng lặp Retry để chuyển model
                     }
-                    await new Promise(resolve => setTimeout(resolve, delays[i]));
                 }
             }
+            
+            // Nếu chạy hết danh sách model mà vẫn không được
+            alert("Rất tiếc, API Key của bạn không có quyền truy cập vào bất kỳ mô hình AI nào. Vui lòng tạo một API Key mới.");
+            return null;
         }
 
         /* Tính năng 1: AI Viết SKKN Thông minh hơn */
