@@ -22,25 +22,5 @@
       "password": "123"
     }
   ],
-  "skkn": [
-    {
-      "id": "SKKN1772035488019",
-      "ten": "giải pháp sinh hoạt chủ nhiệm trong thời đại số",
-      "tacgia": "Quản Trị Viên",
-      "tacgiaId": "ADMIN",
-      "monhoc": "hoá",
-      "capdo": "THCS",
-      "namhoc": "2025-2026",
-      "mota": "",
-      "noidung": "bbbbbb",
-      "ketqua": "",
-      "ngaytao": "2026-02-25",
-      "ngaysua": "2026-02-25",
-      "trangthai": "Từ chối",
-      "diemso": "9.5",
-      "nhanxet": "",
-      "file_dinhkem": "https://raw.githubusercontent.com/pk0979/app-quan-ly-skkn/main/uploads/1772035580727____ph_n_1.docx",
-      "file_name": "đề phần 1.docx"
-    }
-  ]
+  "skkn": []
 }
