@@ -606,7 +606,8 @@
                 return null;
             }
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${activeApiKey}`;
+            // Đã đổi sang mô hình gemini-1.5-flash bản chính thức, ổn định và tương thích với mọi API Key
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${activeApiKey}`;
             const delays = [1000, 2000, 4000, 8000, 16000];
             
             for (let i = 0; i <= maxRetries; i++) {
