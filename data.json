@@ -22,5 +22,25 @@
       "password": "123"
     }
   ],
-  "skkn": []
+  "skkn": [
+    {
+      "id": "SKKN1772035488019",
+      "ten": "giải pháp sinh hoạt chủ nhiệm trong thời đại số",
+      "tacgia": "Quản Trị Viên",
+      "tacgiaId": "ADMIN",
+      "monhoc": "hoá",
+      "capdo": "THCS",
+      "namhoc": "2025-2026",
+      "mota": "",
+      "noidung": "bbbbbb",
+      "ketqua": "",
+      "ngaytao": "2026-02-25",
+      "ngaysua": null,
+      "trangthai": "Đang chờ duyệt",
+      "diemso": null,
+      "nhanxet": null,
+      "file_dinhkem": "https://raw.githubusercontent.com/pk0979/app-quan-ly-skkn/main/uploads/1772035486270_noidung_laydethiHSG.docx",
+      "file_name": "noidung laydethiHSG.docx"
+    }
+  ]
 }
