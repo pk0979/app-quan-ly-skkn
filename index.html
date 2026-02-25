@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sáng Kiến Việt - Quản lý SKKN & AI</title>
+    <!-- Sử dụng FontAwesome cho Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* === BẢNG MÀU VÀ TYPOGRAPHY === */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --ai-color: #8a2be2; /* Màu tím đặc trưng cho AI */
+            --bg-color: #f8f9fa;
+            --text-color: #343a40;
+            --white: #ffffff;
+            --border-color: #dee2e6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding-bottom: 60px; /* Không gian cho footer */
+        }
+
+        /* === TIỆN ÍCH (UTILITIES) === */
+        .text-center { text-align: center; }
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mb-1 { margin-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .pb-2 { padding-bottom: 1rem; }
+        .d-flex { display: flex; }
+        .justify-content-between { justify-content: space-between; }
+        .align-items-center { align-items: center; }
+        .gap-1 { gap: 0.5rem; }
+        .hidden { display: none !important; }
+        .border-bottom { border-bottom: 1px solid var(--border-color); }
+
+        /* === NÚT BẤM (BUTTONS) === */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-weight: 400;
+            text-align: center;
+            border: 1px solid transparent;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn:hover { opacity: 0.8; }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-primary { background-color: var(--primary-color); color: var(--white); }
+        .btn-secondary { background-color: var(--secondary-color); color: var(--white); }
+        .btn-success { background-color: var(--success-color); color: var(--white); }
+        .btn-danger { background-color: var(--danger-color); color: var(--white); }
+        .btn-warning { background-color: var(--warning-color); color: #212529; }
+        .btn-info { background-color: var(--info-color); color: var(--white); }
+        .btn-ai { background-color: var(--ai-color); color: var(--white); font-weight: bold; }
+        .btn-ai i { color: #f1c40f; }
+        .btn-sm { padding: 0.25rem 0.5rem; font-size: 0.875rem; }
+
+        /* === BỐ CỤC CHUNG === */
+        .app-container {
+            display: flex;
+            min-height: calc(100vh - 60px);
+        }
+
+        /* === SIDEBAR VÀ HEADER === */
+        .sidebar {
+            width: 250px;
+            background-color: var(--white);
+            border-right: 1px solid var(--border-color);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .nav-item {
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            color: var(--text-color);
+            text-decoration: none;
+            display: block;
+        }
+        .nav-item:hover, .nav-item.active {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+        .nav-item i { margin-right: 10px; width: 20px; text-align: center; }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--white);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+        }
+
+        /* === THẺ (CARDS) === */
+        .card {
+            background-color: var(--white);
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        .card-title {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 0.5rem;
+        }
+
+        /* === LƯỚI THỐNG KÊ (DASHBOARD) === */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background-color: var(--white);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+            border-left: 5px solid var(--primary-color);
+        }
+        .stat-card h3 { font-size: 2rem; margin: 0.5rem 0; color: var(--text-color); }
+        .stat-card p { color: var(--secondary-color); font-size: 0.9rem; text-transform: uppercase;}
+
+        /* === BẢNG (TABLES) === */
+        .table-responsive { overflow-x: auto; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--white);
+        }
+        th, td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left;
+        }
+        th {
+            background-color: var(--bg-color);
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        tr:hover { background-color: #f1f3f5; }
+
+        /* === BIỂU MẪU (FORMS) === */
+        .form-group { margin-bottom: 1rem; }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        .form-control {
+            display: block;
+            width: 100%;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--text-color);
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 0.25rem;
+            transition: border-color .15s ease-in-out;
+        }
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: 0;
+        }
+        textarea.form-control { min-height: 100px; resize: vertical; }
+        
+        /* === BADGES (TRẠNG THÁI) === */
+        .badge {
+            padding: 0.25em 0.4em;
+            font-size: 75%;
+            font-weight: 700;
+            border-radius: 0.25rem;
+            color: white;
+            display: inline-block;
+        }
+        .badge-success { background-color: var(--success-color); }
+        .badge-warning { background-color: var(--warning-color); color: #212529;}
+        .badge-danger { background-color: var(--danger-color); }
+
+        /* === ĐĂNG NHẬP === */
+        #login-view {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: var(--bg-color);
+        }
+        .login-box {
+            width: 400px;
+            padding: 2rem;
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .login-box h2 { text-align: center; color: var(--primary-color); margin-bottom: 1.5rem; }
+
+        /* === AI LOADER === */
+        .ai-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            border-radius: 0.5rem;
+        }
+        .ai-overlay i { font-size: 2rem; color: var(--ai-color); margin-bottom: 10px; }
+
+        /* === FOOTER === */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #343a40;
+            color: #ffffff;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 14px;
+            z-index: 1000;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
+        }
+        .footer i { color: #dc3545; }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); }
+            .sidebar-brand { margin-bottom: 1rem; }
+            .main-content { padding: 1rem; }
+            .header { flex-direction: column; gap: 1rem; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MÀN HÌNH ĐĂNG NHẬP -->
+    <div id="login-view">
+        <div class="login-box">
+            <h2><i class="fas fa-lightbulb"></i> Sáng Kiến Việt</h2>
+            <div id="login-error" class="hidden" style="color: red; margin-bottom: 10px; text-align: center; background: #ffe6e6; padding: 10px; border-radius: 4px;">Sai tài khoản hoặc mật khẩu!</div>
+            <div id="login-loading" class="hidden" style="color: var(--primary-color); margin-bottom: 10px; text-align: center;"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu từ GitHub...</div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Tên đăng nhập</label>
+                    <input type="text" id="login-username" class="form-control" required placeholder="admin / gv1 / hs1">
+                </div>
+                <div class="form-group">
+                    <label>Mật khẩu</label>
+                    <input type="password" id="login-password" class="form-control" required placeholder="123">
+                </div>
+                <button type="submit" id="login-btn" class="btn btn-primary" style="width: 100%;"><i class="fas fa-sign-in-alt"></i> Đăng nhập</button>
+                <button type="button" class="btn btn-warning mt-1" style="width: 100%;" onclick="openGitHubConfig()"><i class="fab fa-github"></i> Cấu hình GitHub API</button>
+            </form>
+            <div class="mt-2 text-center" style="font-size: 0.85rem; color: var(--secondary-color);">
+                Dữ liệu mẫu: admin/123 (Quản trị), gv1/123 (Giáo viên), hs1/123 (Học sinh)
+            </div>
+        </div>
+    </div>
+
+    <!-- MÀN HÌNH CẤU HÌNH GITHUB -->
+    <div id="github-config-view" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; display: flex; align-items: center; justify-content: center;">
+        <div class="login-box" style="width: 450px;">
+            <h2 style="color: #333;"><i class="fab fa-github"></i> Cấu hình GitHub DB</h2>
+            <p style="font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 1rem; text-align: center;">Dữ liệu và file đính kèm sẽ được lưu trữ trực tiếp trên Repository của bạn.</p>
+            <form id="github-form">
+                <div class="form-group">
+                    <label>GitHub Personal Access Token (PAT)</label>
+                    <input type="password" id="gh-token" class="form-control" required placeholder="ghp_xxxxxxxxxxxxxxxxx">
+                </div>
+                <div class="form-group">
+                    <label>Chủ sở hữu (Owner/Username)</label>
+                    <input type="text" id="gh-owner" class="form-control" required placeholder="Ví dụ: nguyenvana">
+                </div>
+                <div class="form-group">
+                    <label>Tên Repository</label>
+                    <input type="text" id="gh-repo" class="form-control" required placeholder="Ví dụ: skkn-data">
+                </div>
+                <button type="submit" class="btn btn-success" style="width: 100%;"><i class="fas fa-save"></i> Lưu Cấu Hình</button>
+                <button type="button" class="btn btn-secondary mt-1" style="width: 100%;" onclick="closeGitHubConfig()">Đóng</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MÀN HÌNH CHÍNH (APP) -->
+    <div id="app-view" class="app-container hidden">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fas fa-lightbulb"></i> SKKN Manager
+            </div>
+            <a class="nav-item active" onclick="navigate('dashboard')"><i class="fas fa-chart-line"></i> Tổng quan</a>
+            <a class="nav-item" onclick="navigate('list')"><i class="fas fa-list"></i> Danh sách SKKN</a>
+            <a class="nav-item" onclick="navigate('form')" id="nav-add-skkn"><i class="fas fa-plus-circle"></i> Đăng ký SKKN</a>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div>
+                    <h2 id="page-title">Tổng quan</h2>
+                </div>
+                <div class="user-info">
+                    <button class="btn btn-sm btn-warning" onclick="openGitHubConfig()"><i class="fab fa-github"></i> Cấu hình DB</button>
+                    <span id="user-display-name" style="margin-left: 10px;"><b>Nguyễn Văn A</b> (Giáo viên)</span>
+                    <button class="btn btn-sm btn-secondary" style="margin-left: 10px;" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Đăng xuất</button>
+                </div>
+            </div>
+
+            <!-- View: Dashboard -->
+            <div id="view-dashboard" class="view-section">
+                <div class="stats-grid">
+                    <div class="stat-card" style="border-color: var(--primary-color);">
+                        <p>Tổng số SKKN</p>
+                        <h3 id="stat-total">0</h3>
+                    </div>
+                    <div class="stat-card" style="border-color: var(--success-color);">
+                        <p>Đã duyệt</p>
+                        <h3 id="stat-approved">0</h3>
+                    </div>
+                    <div class="stat-card" style="border-color: var(--warning-color);">
+                        <p>Chờ duyệt</p>
+                        <h3 id="stat-pending">0</h3>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">Sáng kiến mới nhất</h3>
+                    <div class="table-responsive">
+                        <table id="recent-table">
+                            <thead>
+                                <tr>
+                                    <th>Tên sáng kiến</th>
+                                    <th>Tác giả</th>
+                                    <th>Môn học</th>
+                                    <th>Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-table-body">
+                                <!-- Nội dung sẽ được render bằng JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View: Danh sách SKKN -->
+            <div id="view-list" class="view-section hidden">
+                <div class="card">
+                    <div class="d-flex justify-content-between align-items-center mb-2" style="flex-wrap: wrap; gap: 10px;">
+                        <div class="d-flex gap-1" style="flex: 1; min-width: 300px;">
+                            <input type="text" id="search-input" class="form-control" placeholder="Tìm kiếm theo tên, tác giả..." onkeyup="renderTable()">
+                            <select id="filter-status" class="form-control" style="width: 150px;" onchange="renderTable()">
+                                <option value="all">Tất cả trạng thái</option>
+                                <option value="Đã duyệt">Đã duyệt</option>
+                                <option value="Đang chờ duyệt">Đang chờ duyệt</option>
+                                <option value="Từ chối">Từ chối</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" onclick="window.print()"><i class="fas fa-print"></i> In danh sách</button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table id="skkn-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tên SKKN</th>
+                                    <th>Tác giả</th>
+                                    <th>Năm học</th>
+                                    <th>Trạng thái</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="skkn-table-body">
+                                <!-- Nội dung sẽ được render bằng JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View: Form Thêm/Sửa SKKN -->
+            <div id="view-form" class="view-section hidden">
+                <div class="card" id="form-card-container">
+                    <div id="ai-writing-overlay" class="ai-overlay hidden">
+                        <i class="fas fa-magic fa-spin"></i>
+                        <p>AI đang phân tích và soạn thảo nội dung...</p>
+                    </div>
+
+                    <h3 class="card-title" id="form-title">Đăng ký Sáng kiến kinh nghiệm</h3>
+                    <form id="skkn-form">
+                        <input type="hidden" id="form-id">
+                        
+                        <div class="form-group">
+                            <label>Tên sáng kiến (*)</label>
+                            <input type="text" id="form-ten" class="form-control" required placeholder="Nhập tên sáng kiến rõ ràng, súc tích">
+                        </div>
+                        
+                        <div class="d-flex gap-1" style="flex-wrap: wrap;">
+                            <div class="form-group" style="flex: 1; min-width: 200px;">
+                                <label>Môn học (*)</label>
+                                <input type="text" id="form-monhoc" class="form-control" required placeholder="VD: Toán, Ngữ Văn">
+                            </div>
+                            <div class="form-group" style="flex: 1; min-width: 200px;">
+                                <label>Năm học (*)</label>
+                                <input type="text" id="form-namhoc" class="form-control" required pattern="\d{4}-\d{4}" title="Định dạng: YYYY-YYYY (VD: 2023-2024)" placeholder="2023-2024">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Mô tả ý tưởng cốt lõi</label>
+                            <textarea id="form-mota" class="form-control" style="min-height: 60px;" placeholder="Viết ngắn gọn 1-2 câu về ý tưởng của bạn..."></textarea>
+                        </div>
+
+                        <!-- KHU VỰC TÍCH HỢP AI -->
+                        <div class="form-group" style="background: #f4f0fa; padding: 15px; border-radius: 8px; border: 1px solid #e1d5f2;">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label style="margin: 0; color: var(--ai-color);"><i class="fas fa-robot"></i> Nội dung chi tiết & Kết quả (*)</label>
+                                <button type="button" class="btn btn-ai btn-sm" onclick="generateSKKNByAI()" id="btn-ai-write">
+                                    <i class="fas fa-magic"></i> AI Tự Động Viết Sáng Kiến
+                                </button>
+                            </div>
+                            <p style="font-size: 0.85rem; color: var(--secondary-color); margin-bottom: 10px;">(Hãy nhập Tên, Môn học, và Mô tả ý tưởng ở trên. Sau đó bấm nút "AI Tự Động Viết" để AI giúp bạn soạn thảo nội dung chi tiết và kết quả)</p>
+                            
+                            <textarea id="form-noidung" class="form-control mb-1" required style="min-height: 200px;" placeholder="Nội dung chi tiết giải pháp, phương pháp áp dụng..."></textarea>
+                            <textarea id="form-ketqua" class="form-control" style="min-height: 80px;" placeholder="Kết quả định lượng và định tính sau khi áp dụng"></textarea>
+                        </div>
+
+                        <div class="form-group mt-2">
+                            <label>File đính kèm (Sẽ được tải trực tiếp lên GitHub)</label>
+                            <input type="file" id="form-file" class="form-control" accept=".pdf,.doc,.docx">
+                            <small style="color: var(--secondary-color);" id="file-help-text">*Chọn file thực tế để đính kèm. File sẽ được lưu trong thư mục uploads/ của repository.</small>
+                        </div>
+
+                        <div class="mt-2">
+                            <button type="submit" id="save-btn" class="btn btn-primary"><i class="fas fa-save"></i> Lưu SKKN</button>
+                            <button type="button" class="btn btn-secondary" onclick="navigate('list')"><i class="fas fa-times"></i> Hủy</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- View: Chi tiết & Kiểm định SKKN -->
+            <div id="view-detail" class="view-section hidden">
+                <div class="card" id="detail-card-container">
+                    <div id="ai-review-overlay" class="ai-overlay hidden">
+                        <i class="fas fa-search fa-spin"></i>
+                        <p>AI đang quét đạo văn và chấm điểm...</p>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+                        <h3 class="card-title mb-0" style="border: none; padding: 0;" id="detail-ten">Tên SKKN</h3>
+                        <span id="detail-trangthai" class="badge">Trạng thái</span>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+                        <p><b>Mã SKKN:</b> <span id="detail-id"></span></p>
+                        <p><b>Tác giả:</b> <span id="detail-tacgia"></span></p>
+                        <p><b>Môn học:</b> <span id="detail-monhoc"></span></p>
+                        <p><b>Năm học:</b> <span id="detail-namhoc"></span></p>
+                        <p><b>Ngày tạo:</b> <span id="detail-ngaytao"></span></p>
+                        <p><b>Điểm số:</b> <span id="detail-diemso" style="font-weight: bold; color: var(--danger-color);"></span></p>
+                    </div>
+
+                    <div class="mb-2">
+                        <b>Mô tả:</b>
+                        <p id="detail-mota" style="background: #f1f3f5; padding: 10px; border-radius: 4px;"></p>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <b>Nội dung:</b>
+                        <div id="detail-noidung" style="background: #f1f3f5; padding: 10px; border-radius: 4px; white-space: pre-wrap;"></div>
+                    </div>
+
+                    <div class="mb-2">
+                        <b>Kết quả:</b>
+                        <p id="detail-ketqua" style="background: #f1f3f5; padding: 10px; border-radius: 4px;"></p>
+                    </div>
+
+                    <div class="mb-2" id="detail-file-container" class="hidden">
+                        <b>File đính kèm:</b> <a id="detail-file" href="#" target="_blank" style="color: var(--primary-color); text-decoration: none;"><i class="fas fa-file-pdf"></i> <span id="detail-file-name">Xem file đính kèm</span></a>
+                    </div>
+
+                    <hr class="mt-2 mb-2">
+
+                    <!-- Khu vực Kiểm định (Dành cho Admin/Giáo viên) -->
+                    <div id="review-section" class="hidden" style="background: #e9ecef; padding: 15px; border-radius: 8px;">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <h4 style="margin: 0;"><i class="fas fa-check-circle"></i> Hội đồng Kiểm định</h4>
+                            <button type="button" class="btn btn-ai" onclick="reviewSKKNByAI()" id="btn-ai-review">
+                                <i class="fas fa-robot"></i> AI Tự động Kiểm tra Đạo văn & Chấm điểm
+                            </button>
+                        </div>
+                        
+                        <div class="form-group mt-1">
+                            <label>Điểm số đề xuất (Thang điểm 10):</label>
+                            <input type="number" id="review-diemso" class="form-control" min="0" max="10" step="0.5" style="width: 150px; font-weight: bold; color: var(--danger-color);">
+                        </div>
+                        <div class="form-group">
+                            <label>Nhận xét / Báo cáo Đạo văn của AI:</label>
+                            <textarea id="review-nhanxet" class="form-control" style="min-height: 120px;"></textarea>
+                        </div>
+                        <div class="mt-1 gap-1 d-flex">
+                            <button class="btn btn-success" onclick="processReview('Đã duyệt')"><i class="fas fa-check"></i> Phê duyệt chính thức</button>
+                            <button class="btn btn-danger" onclick="processReview('Từ chối')"><i class="fas fa-times"></i> Yêu cầu làm lại</button>
+                        </div>
+                    </div>
+
+                    <!-- Khu vực hiển thị nhận xét nếu đã duyệt/từ chối -->
+                    <div id="feedback-section" class="hidden mt-2">
+                        <b>Nhận xét từ hội đồng:</b>
+                        <p id="detail-nhanxet" style="font-style: italic; color: var(--secondary-color); white-space: pre-wrap;"></p>
+                    </div>
+
+                    <div class="mt-2">
+                        <button class="btn btn-secondary" onclick="navigate('list')"><i class="fas fa-arrow-left"></i> Quay lại</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- FOOTER BẢN QUYỀN (CỐ ĐỊNH) -->
+    <div class="footer">
+        Phát triển bởi <strong>Thầy Tống Phước Khải</strong> - Trường THCS Đa Phước <i class="fas fa-heart"></i>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* === 0. CẤU HÌNH API GEMINI === */
+        const apiKey = ""; // API Key được tiêm tự động bởi môi trường
+
+        /* Hàm gọi API Gemini với Retry (Exponential Backoff) */
+        async function callGeminiAPI(payload, maxRetries = 5) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const delays = [1000, 2000, 4000, 8000, 16000];
+            
+            for (let i = 0; i <= maxRetries; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP Error: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    return data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+                } catch (err) {
+                    if (i === maxRetries) {
+                        alert("Không thể kết nối với AI. Vui lòng thử lại sau.");
+                        return null;
+                    }
+                    await new Promise(resolve => setTimeout(resolve, delays[i]));
+                }
+            }
+        }
+
+        /* Tính năng 1: AI Viết SKKN */
+        async function generateSKKNByAI() {
+            const ten = document.getElementById('form-ten').value.trim();
+            const mon = document.getElementById('form-monhoc').value.trim();
+            const mota = document.getElementById('form-mota').value.trim();
+
+            if (!ten || !mon) {
+                alert("Vui lòng nhập ít nhất Tên Sáng Kiến và Môn học để AI có dữ liệu soạn thảo.");
+                return;
+            }
+
+            document.getElementById('ai-writing-overlay').classList.remove('hidden');
+
+            const prompt = `Đóng vai là một giáo viên THCS xuất sắc tại Việt Nam. Hãy viết một "Sáng kiến kinh nghiệm" (SKKN) chuyên nghiệp, cấu trúc rõ ràng và tính thực tiễn cao dựa trên thông tin sau:
+            - Tên sáng kiến: ${ten}
+            - Môn học: ${mon}
+            - Ý tưởng cốt lõi: ${mota || 'Hãy tự suy nghĩ một ý tưởng hay ho và thực tế'}
+            
+            Yêu cầu trả về định dạng JSON (Chỉ trả về JSON, không thêm text khác) có cấu trúc:
+            {
+                "noidung": "Phần nội dung chi tiết gồm: 1. Đặt vấn đề, 2. Thực trạng, 3. Các biện pháp thực hiện (viết chi tiết ít nhất 3 biện pháp).",
+                "ketqua": "Kết quả đạt được (định tính và định lượng) sau khi áp dụng sáng kiến."
+            }`;
+
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            noidung: { type: "STRING" },
+                            ketqua: { type: "STRING" }
+                        }
+                    }
+                }
+            };
+
+            const responseText = await callGeminiAPI(payload);
+            document.getElementById('ai-writing-overlay').classList.add('hidden');
+
+            if (responseText) {
+                try {
+                    const data = JSON.parse(responseText);
+                    document.getElementById('form-noidung').value = data.noidung || "";
+                    document.getElementById('form-ketqua').value = data.ketqua || "";
+                } catch (e) {
+                    console.error("Lỗi phân tích JSON từ AI:", e);
+                    alert("AI trả về định dạng không mong muốn, vui lòng thử lại.");
+                }
+            }
+        }
+
+        /* Tính năng 2: AI Kiểm định & Chấm điểm */
+        async function reviewSKKNByAI() {
+            const ten = document.getElementById('detail-ten').innerText;
+            const noidung = document.getElementById('detail-noidung').innerText;
+            const ketqua = document.getElementById('detail-ketqua').innerText;
+
+            if (!noidung || noidung.length < 50) {
+                alert("Nội dung quá ngắn để AI có thể đánh giá!");
+                return;
+            }
+
+            document.getElementById('ai-review-overlay').classList.remove('hidden');
+
+            const prompt = `Bạn là chuyên gia hội đồng thẩm định Sáng kiến kinh nghiệm giáo dục cấp THCS.
+            Dưới đây là một bài sáng kiến:
+            - Tên: ${ten}
+            - Nội dung: ${noidung}
+            - Kết quả: ${ketqua}
+
+            Hãy thực hiện 2 nhiệm vụ:
+            1. Quét lỗi Đạo văn / Trùng lặp: Phân tích xem nội dung này có dùng ngôn từ quá chung chung, sáo rỗng hoặc sao chép từ các mẫu giáo án/SKKN phổ biến trên mạng không. Đưa ra tỷ lệ % nghi ngờ đạo văn.
+            2. Chấm điểm & Nhận xét: Đánh giá ưu điểm, khuyết điểm, tính thực tiễn và chấm điểm từ 0 đến 10.
+
+            Yêu cầu trả về định dạng JSON chuẩn với cấu trúc:
+            {
+                "diemso": number (từ 0 đến 10),
+                "nhanxet": "Báo cáo đạo văn: ...\nNhận xét chuyên môn: ... (gắn gọn)"
+            }`;
+
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            diemso: { type: "NUMBER" },
+                            nhanxet: { type: "STRING" }
+                        }
+                    }
+                }
+            };
+
+            const responseText = await callGeminiAPI(payload);
+            document.getElementById('ai-review-overlay').classList.add('hidden');
+
+            if (responseText) {
+                try {
+                    const data = JSON.parse(responseText);
+                    document.getElementById('review-diemso').value = data.diemso || 0;
+                    document.getElementById('review-nhanxet').value = data.nhanxet || "";
+                } catch (e) {
+                    console.error("Lỗi phân tích JSON từ AI:", e);
+                    alert("Có lỗi trong quá trình AI phân tích. Vui lòng thử lại.");
+                }
+            }
+        }
+
+        /* === 1. DỮ LIỆU MẶC ĐỊNH & KHỞI TẠO === */
+        const defaultUsers = [
+            { id: "ADMIN", ten: "Quản Trị Viên", vaitro: "QuanTri", username: "admin", password: "123" },
+            { id: "GV001", ten: "Nguyễn Văn A", vaitro: "GiaoVien", username: "gv1", password: "123" },
+            { id: "HS001", ten: "Trần Học Sinh", vaitro: "HocSinh", username: "hs1", password: "123" }
+        ];
+
+        let currentUser = null;
+        let userList = [...defaultUsers];
+        let skknList = [];
+        let currentDetailId = null;
+
+        let ghConfig = JSON.parse(localStorage.getItem('skkn_gh_config')) || { token: '', owner: '', repo: '' };
+        let ghFileSha = null;
+
+        /* === 2. HÀM TIỆN ÍCH GITHUB API === */
+        function b64EncodeUnicode(str) {
+            const bytes = new TextEncoder().encode(str);
+            let binary = '';
+            for (let i = 0; i < bytes.byteLength; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return btoa(binary);
+        }
+        
+        function b64DecodeUnicode(str) {
+            const binary = atob(str);
+            const bytes = new Uint8Array(binary.length);
+            for (let i = 0; i < binary.length; i++) {
+                bytes[i] = binary.charCodeAt(i);
+            }
+            return new TextDecoder().decode(bytes);
+        }
+
+        async function saveGitHubData(isInit = false) {
+            if (!ghConfig.token) throw new Error("Chưa cấu hình Token!");
+            
+            const dataToSave = { users: userList, skkn: skknList };
+            const base64Content = b64EncodeUnicode(JSON.stringify(dataToSave, null, 2));
+
+            const body = {
+                message: isInit ? 'Khởi tạo CSDL SKKN' : `Cập nhật dữ liệu lúc ${new Date().toLocaleString()}`,
+                content: base64Content
+            };
+            if (ghFileSha) body.sha = ghFileSha;
+
+            const res = await fetch(`https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/data.json`, {
+                method: 'PUT',
+                headers: { 
+                    'Authorization': `Bearer ${ghConfig.token}`, 
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json' 
+                },
+                body: JSON.stringify(body)
+            });
+
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                throw new Error(errData.message || `HTTP ${res.status}`);
+            }
+            const result = await res.json();
+            ghFileSha = result.content.sha;
+            return true;
+        }
+
+        async function fetchGitHubData() {
+            if (!ghConfig.token || !ghConfig.owner || !ghConfig.repo) return false;
+            
+            const repoRes = await fetch(`https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}`, {
+                headers: { 
+                    'Authorization': `Bearer ${ghConfig.token}`, 
+                    'Accept': 'application/vnd.github.v3+json' 
+                }
+            });
+
+            if (!repoRes.ok) {
+                throw new Error(`Không tìm thấy Repository '${ghConfig.owner}/${ghConfig.repo}'. Xin kiểm tra lại tên Owner, Tên Repo và quyền của Token (cần tích chọn scope 'repo').`);
+            }
+
+            const repoInfo = await repoRes.json();
+            if (!repoInfo.default_branch) {
+                throw new Error(`Repository '${ghConfig.repo}' đang trống rỗng. Vui lòng truy cập GitHub và tạo ít nhất 1 file (ví dụ README.md) để khởi tạo nhánh gốc trước khi sử dụng ứng dụng!`);
+            }
+
+            const res = await fetch(`https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/data.json`, {
+                headers: { 
+                    'Authorization': `Bearer ${ghConfig.token}`, 
+                    'Accept': 'application/vnd.github.v3+json' 
+                }
+            });
+            
+            if (res.status === 404) {
+                await saveGitHubData(true);
+                return true; 
+            }
+            
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                throw new Error(errData.message || `HTTP ${res.status}`);
+            }
+            
+            const data = await res.json();
+            ghFileSha = data.sha;
+            const decodedStr = b64DecodeUnicode(data.content);
+            const parsed = JSON.parse(decodedStr);
+            
+            userList = parsed.users || defaultUsers;
+            skknList = parsed.skkn || [];
+            return true;
+        }
+
+        async function uploadFileToGitHub(file) {
+            if (!ghConfig.token) return null;
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    const base64String = e.target.result.split(',')[1];
+                    const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+                    const fileName = `uploads/${Date.now()}_${safeName}`;
+                    
+                    try {
+                        const res = await fetch(`https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/${fileName}`, {
+                            method: 'PUT',
+                            headers: { 
+                                'Authorization': `Bearer ${ghConfig.token}`, 
+                                'Accept': 'application/vnd.github.v3+json',
+                                'Content-Type': 'application/json' 
+                            },
+                            body: JSON.stringify({
+                                message: `Tải lên file đính kèm: ${file.name}`,
+                                content: base64String
+                            })
+                        });
+                        
+                        if (!res.ok) {
+                            const errData = await res.json().catch(() => ({}));
+                            throw new Error(errData.message || `HTTP ${res.status}`);
+                        }
+                        const data = await res.json();
+                        resolve({ name: file.name, url: data.content.download_url }); 
+                    } catch (err) {
+                        console.error("Upload Error:", err);
+                        alert("Lỗi tải file: " + err.message);
+                        resolve(null);
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        /* === 3. XỬ LÝ ĐĂNG NHẬP / UI CẤU HÌNH === */
+        function openGitHubConfig() {
+            document.getElementById('gh-token').value = ghConfig.token;
+            document.getElementById('gh-owner').value = ghConfig.owner;
+            document.getElementById('gh-repo').value = ghConfig.repo;
+            document.getElementById('github-config-view').classList.remove('hidden');
+        }
+
+        function closeGitHubConfig() {
+            document.getElementById('github-config-view').classList.add('hidden');
+        }
+
+        document.getElementById('github-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            ghConfig = {
+                token: document.getElementById('gh-token').value.trim(),
+                owner: document.getElementById('gh-owner').value.trim(),
+                repo: document.getElementById('gh-repo').value.trim()
+            };
+            localStorage.setItem('skkn_gh_config', JSON.stringify(ghConfig));
+            alert("Đã lưu cấu hình. Vui lòng đăng nhập lại để tải dữ liệu!");
+            closeGitHubConfig();
+        });
+
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!ghConfig.token || !ghConfig.owner || !ghConfig.repo) {
+                alert("Vui lòng Cấu hình GitHub API trước khi đăng nhập để ứng dụng có thể đọc/ghi dữ liệu!");
+                openGitHubConfig();
+                return;
+            }
+
+            const u = document.getElementById('login-username').value;
+            const p = document.getElementById('login-password').value;
+            const errorBox = document.getElementById('login-error');
+            
+            errorBox.classList.add('hidden');
+            document.getElementById('login-btn').classList.add('hidden');
+            document.getElementById('login-loading').classList.remove('hidden');
+
+            try {
+                const success = await fetchGitHubData();
+                if (!success) throw new Error("Dữ liệu cấu hình GitHub có thể đang bị thiếu hoặc không chính xác.");
+            } catch (err) {
+                errorBox.innerHTML = `<strong>Lỗi kết nối GitHub:</strong><br>${err.message}`;
+                errorBox.classList.remove('hidden');
+                document.getElementById('login-btn').classList.remove('hidden');
+                document.getElementById('login-loading').classList.add('hidden');
+                return;
+            }
+            
+            document.getElementById('login-btn').classList.remove('hidden');
+            document.getElementById('login-loading').classList.add('hidden');
+
+            const user = userList.find(x => x.username === u && x.password === p);
+            
+            if (user) {
+                currentUser = user;
+                document.getElementById('login-view').classList.add('hidden');
+                document.getElementById('app-view').classList.remove('hidden');
+                
+                let roleName = user.vaitro === "QuanTri" ? "Quản trị" : (user.vaitro === "GiaoVien" ? "Giáo viên" : "Học sinh");
+                document.getElementById('user-display-name').innerHTML = `<b>${user.ten}</b> (${roleName})`;
+                
+                navigate('dashboard');
+            } else {
+                errorBox.innerText = "Sai tài khoản hoặc mật khẩu!";
+                errorBox.classList.remove('hidden');
+            }
+        });
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('login-form').reset();
+            document.getElementById('login-error').classList.add('hidden');
+            document.getElementById('app-view').classList.add('hidden');
+            document.getElementById('login-view').classList.remove('hidden');
+        }
+
+        /* === 4. ĐIỀU HƯỚNG VÀ RENDER GIAO DIỆN === */
+        function navigate(viewName) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            event && event.currentTarget && event.currentTarget.classList ? event.currentTarget.classList.add('active') : null;
+
+            if (viewName === 'dashboard') {
+                document.getElementById('view-dashboard').classList.remove('hidden');
+                document.getElementById('page-title').innerText = "Tổng quan";
+                renderDashboard();
+            } 
+            else if (viewName === 'list') {
+                document.getElementById('view-list').classList.remove('hidden');
+                document.getElementById('page-title').innerText = "Danh sách Sáng kiến";
+                renderTable();
+            }
+            else if (viewName === 'form') {
+                document.getElementById('view-form').classList.remove('hidden');
+                document.getElementById('page-title').innerText = "Cập nhật SKKN";
+                if(!currentDetailId) {
+                    document.getElementById('skkn-form').reset();
+                    document.getElementById('form-id').value = '';
+                    document.getElementById('form-title').innerText = "Đăng ký Sáng kiến mới";
+                }
+            }
+            else if (viewName === 'detail') {
+                document.getElementById('view-detail').classList.remove('hidden');
+                document.getElementById('page-title').innerText = "Chi tiết Sáng kiến";
+            }
+        }
+
+        function getBadgeClass(status) {
+            if (status === "Đã duyệt") return "badge-success";
+            if (status === "Từ chối") return "badge-danger";
+            return "badge-warning";
+        }
+
+        function renderDashboard() {
+            let visibleData = skknList;
+            if (currentUser.vaitro === "HocSinh") {
+                visibleData = skknList.filter(item => item.tacgiaId === currentUser.id || item.trangthai === "Đã duyệt");
+            }
+
+            document.getElementById('stat-total').innerText = visibleData.length;
+            document.getElementById('stat-approved').innerText = visibleData.filter(i => i.trangthai === 'Đã duyệt').length;
+            document.getElementById('stat-pending').innerText = visibleData.filter(i => i.trangthai === 'Đang chờ duyệt').length;
+
+            const recent = [...visibleData].sort((a,b) => new Date(b.ngaytao) - new Date(a.ngaytao)).slice(0, 5);
+            const tbody = document.getElementById('recent-table-body');
+            tbody.innerHTML = '';
+            
+            if(recent.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center">Chưa có dữ liệu</td></tr>';
+                return;
+            }
+
+            recent.forEach(item => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${item.ten}</td>
+                        <td>${item.tacgia}</td>
+                        <td>${item.monhoc}</td>
+                        <td><span class="badge ${getBadgeClass(item.trangthai)}">${item.trangthai}</span></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderTable() {
+            const keyword = document.getElementById('search-input').value.toLowerCase();
+            const statusFilter = document.getElementById('filter-status').value;
+            const tbody = document.getElementById('skkn-table-body');
+            tbody.innerHTML = '';
+
+            let filtered = skknList;
+            if (currentUser.vaitro === "HocSinh") {
+                filtered = skknList.filter(item => item.tacgiaId === currentUser.id || item.trangthai === "Đã duyệt");
+            }
+
+            if (keyword) {
+                filtered = filtered.filter(item => item.ten.toLowerCase().includes(keyword) || item.tacgia.toLowerCase().includes(keyword));
+            }
+            if (statusFilter !== 'all') {
+                filtered = filtered.filter(item => item.trangthai === statusFilter);
+            }
+
+            if(filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center">Không tìm thấy sáng kiến nào</td></tr>';
+                return;
+            }
+
+            filtered.sort((a,b) => new Date(b.ngaytao) - new Date(a.ngaytao)).forEach(item => {
+                let actionHtml = `<button class="btn btn-sm btn-info" onclick="viewDetail('${item.id}')"><i class="fas fa-eye"></i> Xem</button>`;
+                
+                if (currentUser.vaitro === "QuanTri" || (currentUser.id === item.tacgiaId && item.trangthai === "Đang chờ duyệt")) {
+                    actionHtml += `
+                        <button class="btn btn-sm btn-warning" onclick="editSKKN('${item.id}')"><i class="fas fa-edit"></i> Sửa</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteSKKN('${item.id}')"><i class="fas fa-trash"></i> Xóa</button>
+                    `;
+                }
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${item.id}</td>
+                        <td>${item.ten}</td>
+                        <td>${item.tacgia}</td>
+                        <td>${item.namhoc}</td>
+                        <td><span class="badge ${getBadgeClass(item.trangthai)}">${item.trangthai}</span></td>
+                        <td class="gap-1 d-flex">${actionHtml}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        /* === 5. CÁC THAO TÁC CRUD === */
+        document.getElementById('skkn-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const id = document.getElementById('form-id').value;
+            const fileInput = document.getElementById('form-file');
+            const saveBtn = document.getElementById('save-btn');
+            
+            let fileData = null;
+
+            saveBtn.disabled = true;
+            
+            if (fileInput.files.length > 0) {
+                saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tải file lên GitHub...';
+                fileData = await uploadFileToGitHub(fileInput.files[0]);
+                if (!fileData) {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<i class="fas fa-save"></i> Lưu SKKN';
+                    return;
+                }
+            }
+
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang đồng bộ CSDL...';
+
+            const newObj = {
+                id: id || "SKKN" + Date.now(),
+                ten: document.getElementById('form-ten').value,
+                tacgia: currentUser.ten,
+                tacgiaId: currentUser.id,
+                monhoc: document.getElementById('form-monhoc').value,
+                capdo: "THCS",
+                namhoc: document.getElementById('form-namhoc').value,
+                mota: document.getElementById('form-mota').value,
+                noidung: document.getElementById('form-noidung').value,
+                ketqua: document.getElementById('form-ketqua').value,
+                ngaytao: new Date().toISOString().split('T')[0],
+                ngaysua: id ? new Date().toISOString().split('T')[0] : null,
+                trangthai: "Đang chờ duyệt",
+                diemso: null,
+                nhanxet: null,
+                file_dinhkem: fileData ? fileData.url : null,
+                file_name: fileData ? fileData.name : null
+            };
+
+            if (id) {
+                const index = skknList.findIndex(x => x.id === id);
+                if (!fileData && skknList[index].file_dinhkem) {
+                    newObj.file_dinhkem = skknList[index].file_dinhkem;
+                    newObj.file_name = skknList[index].file_name;
+                }
+                skknList[index] = { ...skknList[index], ...newObj };
+            } else {
+                skknList.push(newObj);
+            }
+
+            try {
+                await saveGitHubData();
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<i class="fas fa-save"></i> Lưu SKKN';
+                alert("Lưu sáng kiến thành công!");
+                navigate('list');
+            } catch (err) {
+                alert("Lỗi khi lưu dữ liệu lên GitHub:\n" + err.message);
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<i class="fas fa-save"></i> Lưu SKKN';
+            }
+        });
+
+        async function deleteSKKN(id) {
+            if(confirm("Bạn có chắc chắn muốn xóa SKKN này? (Dữ liệu sẽ bị xóa khỏi GitHub)")) {
+                const originalList = [...skknList]; 
+                skknList = skknList.filter(x => x.id !== id);
+                
+                try {
+                    await saveGitHubData();
+                    renderTable();
+                } catch (err) {
+                    alert("Lỗi khi đồng bộ yêu cầu xóa lên GitHub:\n" + err.message);
+                    skknList = originalList;
+                }
+            }
+        }
+
+        function editSKKN(id) {
+            const item = skknList.find(x => x.id === id);
+            if(!item) return;
+
+            currentDetailId = id;
+            document.getElementById('form-id').value = item.id;
+            document.getElementById('form-ten').value = item.ten;
+            document.getElementById('form-monhoc').value = item.monhoc;
+            document.getElementById('form-namhoc').value = item.namhoc;
+            document.getElementById('form-mota').value = item.mota;
+            document.getElementById('form-noidung').value = item.noidung;
+            document.getElementById('form-ketqua').value = item.ketqua;
+            
+            document.getElementById('form-title').innerText = "Chỉnh sửa Sáng kiến";
+            navigate('form');
+        }
+
+        function viewDetail(id) {
+            currentDetailId = id;
+            const item = skknList.find(x => x.id === id);
+            
+            document.getElementById('detail-id').innerText = item.id;
+            document.getElementById('detail-ten').innerText = item.ten;
+            document.getElementById('detail-tacgia').innerText = item.tacgia;
+            document.getElementById('detail-monhoc').innerText = item.monhoc;
+            document.getElementById('detail-namhoc').innerText = item.namhoc;
+            document.getElementById('detail-ngaytao').innerText = item.ngaytao;
+            document.getElementById('detail-diemso').innerText = item.diemso ? item.diemso : "Chưa chấm";
+            
+            document.getElementById('detail-mota').innerText = item.mota || "Không có mô tả";
+            document.getElementById('detail-noidung').innerText = item.noidung;
+            document.getElementById('detail-ketqua').innerText = item.ketqua || "Chưa cập nhật";
+            
+            document.getElementById('detail-trangthai').innerText = item.trangthai;
+            document.getElementById('detail-trangthai').className = `badge ${getBadgeClass(item.trangthai)}`;
+
+            const fileContainer = document.getElementById('detail-file-container');
+            if(item.file_dinhkem) {
+                fileContainer.classList.remove('hidden');
+                document.getElementById('detail-file').href = item.file_dinhkem;
+                document.getElementById('detail-file-name').innerText = item.file_name || "Tải xuống file đính kèm";
+            } else {
+                fileContainer.classList.add('hidden');
+            }
+
+            if ((currentUser.vaitro === "QuanTri" || currentUser.vaitro === "GiaoVien") && item.trangthai === "Đang chờ duyệt") {
+                document.getElementById('review-section').classList.remove('hidden');
+            } else {
+                document.getElementById('review-section').classList.add('hidden');
+            }
+
+            if (item.nhanxet) {
+                document.getElementById('feedback-section').classList.remove('hidden');
+                document.getElementById('detail-nhanxet').innerText = item.nhanxet;
+            } else {
+                document.getElementById('feedback-section').classList.add('hidden');
+            }
+
+            navigate('detail');
+        }
+
+        async function processReview(status) {
+            const diem = document.getElementById('review-diemso').value;
+            const nhanxet = document.getElementById('review-nhanxet').value;
+            
+            if (status === 'Đã duyệt' && !diem) {
+                alert("Vui lòng nhập điểm khi phê duyệt!");
+                return;
+            }
+
+            const itemIndex = skknList.findIndex(x => x.id === currentDetailId);
+            const originalItem = { ...skknList[itemIndex] };
+            
+            skknList[itemIndex].trangthai = status;
+            skknList[itemIndex].diemso = diem;
+            skknList[itemIndex].nhanxet = nhanxet;
+            
+            try {
+                await saveGitHubData();
+                alert(`Đã ${status.toLowerCase()} thành công!`);
+                viewDetail(currentDetailId);
+            } catch (err) {
+                alert("Lỗi khi lưu kết quả kiểm định lên GitHub:\n" + err.message);
+                skknList[itemIndex] = originalItem;
+            }
+        }
+    </script>
+</body>
+</html>
