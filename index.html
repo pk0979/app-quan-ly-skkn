@@ -244,7 +244,7 @@
         .ai-overlay {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.9);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -252,7 +252,8 @@
             z-index: 10;
             border-radius: 0.5rem;
         }
-        .ai-overlay i { font-size: 2rem; color: var(--ai-color); margin-bottom: 10px; }
+        .ai-overlay i { font-size: 2.5rem; color: var(--ai-color); margin-bottom: 15px; }
+        .ai-overlay p { font-weight: bold; color: var(--text-color); }
 
         /* === FOOTER === */
         .footer {
@@ -291,40 +292,49 @@
             <form id="login-form">
                 <div class="form-group">
                     <label>Tên đăng nhập</label>
-                    <input type="text" id="login-username" class="form-control" required placeholder="admin / gv1 / hs1">
+                    <input type="text" id="login-username" class="form-control" required placeholder="Nhập tên đăng nhập...">
                 </div>
                 <div class="form-group">
                     <label>Mật khẩu</label>
-                    <input type="password" id="login-password" class="form-control" required placeholder="123">
+                    <input type="password" id="login-password" class="form-control" required placeholder="Nhập mật khẩu...">
                 </div>
                 <button type="submit" id="login-btn" class="btn btn-primary" style="width: 100%;"><i class="fas fa-sign-in-alt"></i> Đăng nhập</button>
-                <button type="button" class="btn btn-warning mt-1" style="width: 100%;" onclick="openGitHubConfig()"><i class="fab fa-github"></i> Cấu hình GitHub API</button>
+                <button type="button" class="btn btn-warning mt-1" style="width: 100%;" onclick="openGitHubConfig()"><i class="fas fa-cogs"></i> Cấu hình Hệ thống (GitHub & AI)</button>
             </form>
             <div class="mt-2 text-center" style="font-size: 0.85rem; color: var(--secondary-color);">
-                Dữ liệu mẫu: admin/123 (Quản trị), gv1/123 (Giáo viên), hs1/123 (Học sinh)
+                <em>*Vui lòng liên hệ Quản trị viên để được cấp tài khoản.</em>
             </div>
         </div>
     </div>
 
-    <!-- MÀN HÌNH CẤU HÌNH GITHUB -->
+    <!-- MÀN HÌNH CẤU HÌNH GITHUB & AI -->
     <div id="github-config-view" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; display: flex; align-items: center; justify-content: center;">
-        <div class="login-box" style="width: 450px;">
-            <h2 style="color: #333;"><i class="fab fa-github"></i> Cấu hình GitHub DB</h2>
-            <p style="font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 1rem; text-align: center;">Dữ liệu và file đính kèm sẽ được lưu trữ trực tiếp trên Repository của bạn.</p>
+        <div class="login-box" style="width: 500px; max-height: 90vh; overflow-y: auto;">
+            <h2 style="color: #333;"><i class="fas fa-cogs"></i> Cấu hình Hệ thống</h2>
+            <p style="font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 1rem; text-align: center;">Thiết lập kết nối Cơ sở dữ liệu (GitHub) và Trí tuệ nhân tạo (Gemini AI).</p>
             <form id="github-form">
+                <h4 style="border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 10px; color: var(--primary-color);">1. Cấu hình Dữ liệu (Bắt buộc)</h4>
                 <div class="form-group">
-                    <label>GitHub Personal Access Token (PAT)</label>
+                    <label>GitHub Personal Access Token</label>
                     <input type="password" id="gh-token" class="form-control" required placeholder="ghp_xxxxxxxxxxxxxxxxx">
                 </div>
                 <div class="form-group">
                     <label>Chủ sở hữu (Owner/Username)</label>
-                    <input type="text" id="gh-owner" class="form-control" required placeholder="Ví dụ: nguyenvana">
+                    <input type="text" id="gh-owner" class="form-control" required placeholder="Ví dụ: pk0979">
                 </div>
                 <div class="form-group">
                     <label>Tên Repository</label>
                     <input type="text" id="gh-repo" class="form-control" required placeholder="Ví dụ: skkn-data">
                 </div>
-                <button type="submit" class="btn btn-success" style="width: 100%;"><i class="fas fa-save"></i> Lưu Cấu Hình</button>
+
+                <h4 style="border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 10px; margin-top: 20px; color: var(--ai-color);">2. Cấu hình Trợ lý AI (Tùy chọn)</h4>
+                <div class="form-group">
+                    <label>Gemini API Key</label>
+                    <input type="password" id="gh-gemini" class="form-control" placeholder="Bỏ trống nếu không dùng AI">
+                    <small style="color: var(--secondary-color);">*Lấy key miễn phí tại Google AI Studio để sử dụng tính năng viết & kiểm định tự động.</small>
+                </div>
+
+                <button type="submit" class="btn btn-success mt-2" style="width: 100%;"><i class="fas fa-save"></i> Lưu Cấu Hình</button>
                 <button type="button" class="btn btn-secondary mt-1" style="width: 100%;" onclick="closeGitHubConfig()">Đóng</button>
             </form>
         </div>
@@ -350,7 +360,7 @@
                     <h2 id="page-title">Tổng quan</h2>
                 </div>
                 <div class="user-info">
-                    <button class="btn btn-sm btn-warning" onclick="openGitHubConfig()"><i class="fab fa-github"></i> Cấu hình DB</button>
+                    <button class="btn btn-sm btn-warning" onclick="openGitHubConfig()"><i class="fas fa-cogs"></i> Cấu hình</button>
                     <span id="user-display-name" style="margin-left: 10px;"><b>Nguyễn Văn A</b> (Giáo viên)</span>
                     <button class="btn btn-sm btn-secondary" style="margin-left: 10px;" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Đăng xuất</button>
                 </div>
@@ -434,7 +444,8 @@
                 <div class="card" id="form-card-container">
                     <div id="ai-writing-overlay" class="ai-overlay hidden">
                         <i class="fas fa-magic fa-spin"></i>
-                        <p>AI đang phân tích và soạn thảo nội dung...</p>
+                        <p>Trợ lý AI đang phân tích và soạn thảo nội dung...</p>
+                        <small style="margin-top: 10px; color: #555;">(Quá trình này có thể mất từ 10 - 20 giây)</small>
                     </div>
 
                     <h3 class="card-title" id="form-title">Đăng ký Sáng kiến kinh nghiệm</h3>
@@ -470,10 +481,10 @@
                                     <i class="fas fa-magic"></i> AI Tự Động Viết Sáng Kiến
                                 </button>
                             </div>
-                            <p style="font-size: 0.85rem; color: var(--secondary-color); margin-bottom: 10px;">(Hãy nhập Tên, Môn học, và Mô tả ý tưởng ở trên. Sau đó bấm nút "AI Tự Động Viết" để AI giúp bạn soạn thảo nội dung chi tiết và kết quả)</p>
+                            <p style="font-size: 0.85rem; color: var(--secondary-color); margin-bottom: 10px;">(Hãy điền Tên, Môn học, và Mô tả ý tưởng. AI sẽ giúp bạn mở rộng thành cấu trúc SKKN hoàn chỉnh.)</p>
                             
-                            <textarea id="form-noidung" class="form-control mb-1" required style="min-height: 200px;" placeholder="Nội dung chi tiết giải pháp, phương pháp áp dụng..."></textarea>
-                            <textarea id="form-ketqua" class="form-control" style="min-height: 80px;" placeholder="Kết quả định lượng và định tính sau khi áp dụng"></textarea>
+                            <textarea id="form-noidung" class="form-control mb-1" required style="min-height: 250px;" placeholder="Nội dung chi tiết giải pháp, phương pháp áp dụng..."></textarea>
+                            <textarea id="form-ketqua" class="form-control" style="min-height: 100px;" placeholder="Kết quả định lượng và định tính sau khi áp dụng"></textarea>
                         </div>
 
                         <div class="form-group mt-2">
@@ -495,7 +506,8 @@
                 <div class="card" id="detail-card-container">
                     <div id="ai-review-overlay" class="ai-overlay hidden">
                         <i class="fas fa-search fa-spin"></i>
-                        <p>AI đang quét đạo văn và chấm điểm...</p>
+                        <p>AI đang quét đạo văn và phân tích chất lượng...</p>
+                        <small style="margin-top: 10px; color: #555;">(Hệ thống đang chạy, vui lòng không tắt trang)</small>
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
@@ -538,17 +550,17 @@
                         <div class="d-flex justify-content-between align-items-center mb-1">
                             <h4 style="margin: 0;"><i class="fas fa-check-circle"></i> Hội đồng Kiểm định</h4>
                             <button type="button" class="btn btn-ai" onclick="reviewSKKNByAI()" id="btn-ai-review">
-                                <i class="fas fa-robot"></i> AI Tự động Kiểm tra Đạo văn & Chấm điểm
+                                <i class="fas fa-robot"></i> AI Kiểm định & Chấm điểm
                             </button>
                         </div>
                         
                         <div class="form-group mt-1">
-                            <label>Điểm số đề xuất (Thang điểm 10):</label>
+                            <label>Điểm số (Thang điểm 10):</label>
                             <input type="number" id="review-diemso" class="form-control" min="0" max="10" step="0.5" style="width: 150px; font-weight: bold; color: var(--danger-color);">
                         </div>
                         <div class="form-group">
-                            <label>Nhận xét / Báo cáo Đạo văn của AI:</label>
-                            <textarea id="review-nhanxet" class="form-control" style="min-height: 120px;"></textarea>
+                            <label>Nhận xét / Báo cáo từ AI:</label>
+                            <textarea id="review-nhanxet" class="form-control" style="min-height: 150px;"></textarea>
                         </div>
                         <div class="mt-1 gap-1 d-flex">
                             <button class="btn btn-success" onclick="processReview('Đã duyệt')"><i class="fas fa-check"></i> Phê duyệt chính thức</button>
@@ -579,11 +591,22 @@
     <!-- JAVASCRIPT LOGIC -->
     <script>
         /* === 0. CẤU HÌNH API GEMINI === */
-        const apiKey = ""; // API Key được tiêm tự động bởi môi trường
+        const apiKey = ""; // API Key môi trường cục bộ (nếu có)
+        
+        // Cấu hình LocalStorage
+        let ghConfig = JSON.parse(localStorage.getItem('skkn_gh_config')) || { token: '', owner: '', repo: '', geminiKey: '' };
 
         /* Hàm gọi API Gemini với Retry (Exponential Backoff) */
         async function callGeminiAPI(payload, maxRetries = 5) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            // Sử dụng Key do người dùng nhập, nếu không có thì dùng Key môi trường (nếu được cấp)
+            const activeApiKey = ghConfig.geminiKey || apiKey;
+            
+            if (!activeApiKey) {
+                alert("Bạn chưa cấu hình Gemini API Key!\nVui lòng vào mục 'Cấu hình Hệ thống' và nhập API Key để sử dụng trí tuệ nhân tạo.");
+                return null;
+            }
+
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${activeApiKey}`;
             const delays = [1000, 2000, 4000, 8000, 16000];
             
             for (let i = 0; i <= maxRetries; i++) {
@@ -595,14 +618,16 @@
                     });
 
                     if (!response.ok) {
-                        throw new Error(`HTTP Error: ${response.status}`);
+                        const err = await response.json();
+                        throw new Error(`Lỗi ${response.status}: ${err.error?.message || 'Không rõ lỗi'}`);
                     }
 
                     const data = await response.json();
                     return data.candidates?.[0]?.content?.parts?.[0]?.text || "";
                 } catch (err) {
+                    console.error("Gemini API Error:", err);
                     if (i === maxRetries) {
-                        alert("Không thể kết nối với AI. Vui lòng thử lại sau.");
+                        alert("Lỗi kết nối AI: " + err.message + "\n\nXin kiểm tra lại Gemini API Key của bạn trong mục Cấu hình.");
                         return null;
                     }
                     await new Promise(resolve => setTimeout(resolve, delays[i]));
@@ -610,7 +635,7 @@
             }
         }
 
-        /* Tính năng 1: AI Viết SKKN */
+        /* Tính năng 1: AI Viết SKKN Thông minh hơn */
         async function generateSKKNByAI() {
             const ten = document.getElementById('form-ten').value.trim();
             const mon = document.getElementById('form-monhoc').value.trim();
@@ -623,15 +648,15 @@
 
             document.getElementById('ai-writing-overlay').classList.remove('hidden');
 
-            const prompt = `Đóng vai là một giáo viên THCS xuất sắc tại Việt Nam. Hãy viết một "Sáng kiến kinh nghiệm" (SKKN) chuyên nghiệp, cấu trúc rõ ràng và tính thực tiễn cao dựa trên thông tin sau:
+            const prompt = `Bạn là một chuyên gia giáo dục xuất sắc cấp THCS tại Việt Nam. Dựa vào thông tin sau, hãy tạo ra một nội dung Sáng kiến kinh nghiệm (SKKN) chuẩn, thực tế và có tính ứng dụng cao:
             - Tên sáng kiến: ${ten}
             - Môn học: ${mon}
-            - Ý tưởng cốt lõi: ${mota || 'Hãy tự suy nghĩ một ý tưởng hay ho và thực tế'}
+            - Ý tưởng cốt lõi: ${mota || 'Hãy tự suy nghĩ và đề xuất một ý tưởng giảng dạy sáng tạo, thiết thực nhất'}
             
-            Yêu cầu trả về định dạng JSON (Chỉ trả về JSON, không thêm text khác) có cấu trúc:
+            YÊU CẦU: Trả về DUY NHẤT một đối tượng JSON hợp lệ (không chứa markdown \`\`\`json) với 2 trường dữ liệu:
             {
-                "noidung": "Phần nội dung chi tiết gồm: 1. Đặt vấn đề, 2. Thực trạng, 3. Các biện pháp thực hiện (viết chi tiết ít nhất 3 biện pháp).",
-                "ketqua": "Kết quả đạt được (định tính và định lượng) sau khi áp dụng sáng kiến."
+                "noidung": "Phần này cần viết chi tiết (khoảng 300 - 500 chữ), chia rõ 3 phần: 1. Đặt vấn đề (Lý do chọn đề tài), 2. Thực trạng, 3. Biện pháp thực hiện (Nêu ít nhất 3 biện pháp cụ thể, có ví dụ minh họa). Sử dụng văn phong học thuật, chuyên nghiệp.",
+                "ketqua": "Phần này nêu rõ kết quả đạt được sau khi áp dụng SKKN (Gồm kết quả định tính: thái độ học sinh, và định lượng: tỷ lệ % học lực, điểm số). Viết khoảng 100 chữ."
             }`;
 
             const payload = {
@@ -658,38 +683,38 @@
                     document.getElementById('form-ketqua').value = data.ketqua || "";
                 } catch (e) {
                     console.error("Lỗi phân tích JSON từ AI:", e);
-                    alert("AI trả về định dạng không mong muốn, vui lòng thử lại.");
+                    alert("Có lỗi trong việc giải mã dữ liệu AI, xin vui lòng thử lại.");
                 }
             }
         }
 
-        /* Tính năng 2: AI Kiểm định & Chấm điểm */
+        /* Tính năng 2: AI Kiểm định & Chấm điểm Sâu sát hơn */
         async function reviewSKKNByAI() {
             const ten = document.getElementById('detail-ten').innerText;
             const noidung = document.getElementById('detail-noidung').innerText;
             const ketqua = document.getElementById('detail-ketqua').innerText;
 
             if (!noidung || noidung.length < 50) {
-                alert("Nội dung quá ngắn để AI có thể đánh giá!");
+                alert("Nội dung SKKN quá ngắn, AI không đủ dữ kiện để đánh giá công tâm!");
                 return;
             }
 
             document.getElementById('ai-review-overlay').classList.remove('hidden');
 
-            const prompt = `Bạn là chuyên gia hội đồng thẩm định Sáng kiến kinh nghiệm giáo dục cấp THCS.
-            Dưới đây là một bài sáng kiến:
-            - Tên: ${ten}
-            - Nội dung: ${noidung}
+            const prompt = `Bạn là một Hội đồng Thẩm định Sáng kiến kinh nghiệm giáo dục nghiêm ngặt, công tâm và giàu chuyên môn.
+            Hãy đọc kỹ bản SKKN sau:
+            - Tên SKKN: ${ten}
+            - Nội dung chính: ${noidung}
             - Kết quả: ${ketqua}
 
-            Hãy thực hiện 2 nhiệm vụ:
-            1. Quét lỗi Đạo văn / Trùng lặp: Phân tích xem nội dung này có dùng ngôn từ quá chung chung, sáo rỗng hoặc sao chép từ các mẫu giáo án/SKKN phổ biến trên mạng không. Đưa ra tỷ lệ % nghi ngờ đạo văn.
-            2. Chấm điểm & Nhận xét: Đánh giá ưu điểm, khuyết điểm, tính thực tiễn và chấm điểm từ 0 đến 10.
+            NHIỆM VỤ CỦA BẠN:
+            1. Phát hiện đạo văn/rập khuôn: Đánh giá xem văn phong có chung chung, có dùng các bài mẫu sáo rỗng tràn lan trên mạng không.
+            2. Chấm điểm (Thang 10, cho phép điểm lẻ 0.5): Chấm điểm dựa trên tính mới, tính thực tiễn và tính hiệu quả.
 
-            Yêu cầu trả về định dạng JSON chuẩn với cấu trúc:
+            YÊU CẦU: Trả về DUY NHẤT một đối tượng JSON hợp lệ (không chứa markdown) với 2 trường:
             {
-                "diemso": number (từ 0 đến 10),
-                "nhanxet": "Báo cáo đạo văn: ...\nNhận xét chuyên môn: ... (gắn gọn)"
+                "diemso": number,
+                "nhanxet": "Viết khoảng 150 chữ. Gồm: 1. Đánh giá Ưu điểm; 2. Đánh giá Khuyết điểm; 3. Cảnh báo Đạo văn (nêu rõ tỷ lệ % nghi ngờ nếu văn phong quá chung chung)."
             }`;
 
             const payload = {
@@ -713,15 +738,15 @@
                 try {
                     const data = JSON.parse(responseText);
                     document.getElementById('review-diemso').value = data.diemso || 0;
-                    document.getElementById('review-nhanxet').value = data.nhanxet || "";
+                    document.getElementById('review-nhanxet').value = data.nhanxet || "AI chưa đưa ra nhận xét hợp lệ.";
                 } catch (e) {
                     console.error("Lỗi phân tích JSON từ AI:", e);
-                    alert("Có lỗi trong quá trình AI phân tích. Vui lòng thử lại.");
+                    alert("AI xử lý thất bại do định dạng phản hồi bị sai. Vui lòng thử lại.");
                 }
             }
         }
 
-        /* === 1. DỮ LIỆU MẶC ĐỊNH & KHỞI TẠO === */
+        /* === 1. DỮ LIỆU MẶC ĐỊNH & KHỞI TẠO CƠ BẢN === */
         const defaultUsers = [
             { id: "ADMIN", ten: "Quản Trị Viên", vaitro: "QuanTri", username: "admin", password: "123" },
             { id: "GV001", ten: "Nguyễn Văn A", vaitro: "GiaoVien", username: "gv1", password: "123" },
@@ -732,8 +757,6 @@
         let userList = [...defaultUsers];
         let skknList = [];
         let currentDetailId = null;
-
-        let ghConfig = JSON.parse(localStorage.getItem('skkn_gh_config')) || { token: '', owner: '', repo: '' };
         let ghFileSha = null;
 
         /* === 2. HÀM TIỆN ÍCH GITHUB API === */
@@ -756,7 +779,7 @@
         }
 
         async function saveGitHubData(isInit = false) {
-            if (!ghConfig.token) throw new Error("Chưa cấu hình Token!");
+            if (!ghConfig.token) throw new Error("Chưa cấu hình Token GitHub!");
             
             const dataToSave = { users: userList, skkn: skknList };
             const base64Content = b64EncodeUnicode(JSON.stringify(dataToSave, null, 2));
@@ -797,12 +820,12 @@
             });
 
             if (!repoRes.ok) {
-                throw new Error(`Không tìm thấy Repository '${ghConfig.owner}/${ghConfig.repo}'. Xin kiểm tra lại tên Owner, Tên Repo và quyền của Token (cần tích chọn scope 'repo').`);
+                throw new Error(`Không tìm thấy Repository '${ghConfig.owner}/${ghConfig.repo}'. Xin kiểm tra lại thông tin.`);
             }
 
             const repoInfo = await repoRes.json();
             if (!repoInfo.default_branch) {
-                throw new Error(`Repository '${ghConfig.repo}' đang trống rỗng. Vui lòng truy cập GitHub và tạo ít nhất 1 file (ví dụ README.md) để khởi tạo nhánh gốc trước khi sử dụng ứng dụng!`);
+                throw new Error(`Repository '${ghConfig.repo}' đang trống rỗng. Bạn phải tạo một file README.md trên GitHub trước.`);
             }
 
             const res = await fetch(`https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/data.json`, {
@@ -876,6 +899,7 @@
             document.getElementById('gh-token').value = ghConfig.token;
             document.getElementById('gh-owner').value = ghConfig.owner;
             document.getElementById('gh-repo').value = ghConfig.repo;
+            document.getElementById('gh-gemini').value = ghConfig.geminiKey || '';
             document.getElementById('github-config-view').classList.remove('hidden');
         }
 
@@ -888,7 +912,8 @@
             ghConfig = {
                 token: document.getElementById('gh-token').value.trim(),
                 owner: document.getElementById('gh-owner').value.trim(),
-                repo: document.getElementById('gh-repo').value.trim()
+                repo: document.getElementById('gh-repo').value.trim(),
+                geminiKey: document.getElementById('gh-gemini').value.trim()
             };
             localStorage.setItem('skkn_gh_config', JSON.stringify(ghConfig));
             alert("Đã lưu cấu hình. Vui lòng đăng nhập lại để tải dữ liệu!");
@@ -899,7 +924,7 @@
             e.preventDefault();
             
             if (!ghConfig.token || !ghConfig.owner || !ghConfig.repo) {
-                alert("Vui lòng Cấu hình GitHub API trước khi đăng nhập để ứng dụng có thể đọc/ghi dữ liệu!");
+                alert("Bạn cần phải Cấu hình Hệ thống (Nút màu vàng) trước để ứng dụng có nơi lưu trữ dữ liệu!");
                 openGitHubConfig();
                 return;
             }
@@ -914,7 +939,7 @@
 
             try {
                 const success = await fetchGitHubData();
-                if (!success) throw new Error("Dữ liệu cấu hình GitHub có thể đang bị thiếu hoặc không chính xác.");
+                if (!success) throw new Error("Dữ liệu cấu hình GitHub bị thiếu hoặc không đúng.");
             } catch (err) {
                 errorBox.innerHTML = `<strong>Lỗi kết nối GitHub:</strong><br>${err.message}`;
                 errorBox.classList.remove('hidden');
