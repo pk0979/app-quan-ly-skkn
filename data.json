@@ -1,0 +1,26 @@
+{
+  "users": [
+    {
+      "id": "ADMIN",
+      "ten": "Quản Trị Viên",
+      "vaitro": "QuanTri",
+      "username": "admin",
+      "password": "123"
+    },
+    {
+      "id": "GV001",
+      "ten": "Nguyễn Văn A",
+      "vaitro": "GiaoVien",
+      "username": "gv1",
+      "password": "123"
+    },
+    {
+      "id": "HS001",
+      "ten": "Trần Học Sinh",
+      "vaitro": "HocSinh",
+      "username": "hs1",
+      "password": "123"
+    }
+  ],
+  "skkn": []
+}
